@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "675569941563",
+    "project_id": "safqa-b3f7c",
+    "storage_bucket": "safqa-b3f7c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675569941563:android:5faffc89537e02c001301e",
+        "android_client_info": {
+          "package_name": "com.example.safqa_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwYAd2cYGxxeWZwiIU3Jprkl72ey-wizI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

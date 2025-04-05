@@ -1,0 +1,36 @@
+class AppIcons {
+  static const logo = 'assets/icons/logo.svg';
+  static const onboarding1 = 'assets/icons/onboarding1.svg';
+  static const onboarding2 = 'assets/icons/onboarding2.svg';
+  static const onboarding3 = 'assets/icons/onboarding3.svg';
+  static const arrowBack = 'assets/icons/arrow_back.svg';
+  static const eyeEnable = 'assets/icons/eye_enable.svg';
+  static const eyeDisable = 'assets/icons/eye_disable.svg';
+  static const done = 'assets/icons/done.svg';
+  static const home = 'assets/icons/home.svg';
+  static const search = 'assets/icons/search.svg';
+  static const notifications = 'assets/icons/notifications.svg';
+  static const arrowDown = 'assets/icons/arrow_down.svg';
+  static const location = 'assets/icons/location.svg';
+  static const vertical = 'assets/icons/vertical.svg';
+  static const calender = 'assets/icons/calender.svg';
+  static const horizant = 'assets/icons/horizant.svg';
+  static const addPhoto = 'assets/icons/add_photo.svg';
+  static const login = 'assets/icons/login.svg';
+  static const delete = 'assets/icons/delete.svg';
+  static const edit = 'assets/icons/edit.svg';
+  static const myPosts = 'assets/icons/my_posts.svg';
+  static const arrowForword = 'assets/icons/arrow_forword.svg';
+  static const myOrders = 'assets/icons/my_orders.svg';
+  static const credit = 'assets/icons/credit.svg';
+  static const share = 'assets/icons/share.svg';
+  static const support = 'assets/icons/support.svg';
+  static const use = 'assets/icons/use.svg';
+  static const privcy = 'assets/icons/privcy.svg';
+  static const cart = 'assets/icons/cart.svg';
+  static const photo = 'assets/icons/photo.svg';
+  static const doneCir = 'assets/icons/doneCir.svg';
+  static const infinity = 'assets/icons/infinity.svg';
+  static const download = 'assets/icons/download.svg';
+  static const delete_pic = 'assets/icons/delete_pic.svg';
+}
