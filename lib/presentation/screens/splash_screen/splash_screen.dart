@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (isAuthenticated) {
         GoRouter.of(context).pushReplacement(AppRouter.kMainScreen);
       } else {
-        GoRouter.of(context).pushReplacement(AppRouter.kSignupScreen);
+        GoRouter.of(context).pushReplacement(AppRouter.kLoginScreen);
       }
     }
   }

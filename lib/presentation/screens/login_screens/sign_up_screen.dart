@@ -28,10 +28,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  void _submitForm() {
+  void _submitForm() async{
     if (_formKey.currentState!.validate()) {
       final authCubit = context.read<AuthCubit>();
-      context.read<AuthCubit>().register(
+      await authCubit.register(
             _nameController.text.trim(),
             _phoneController.text.trim(),
             _passwordController.text,
@@ -48,9 +48,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         listener: (context, state) async {
           if (state is AuthSuccess) {
             // 🟢 عند نجاح التسجيل، طلب كود الـ OTP
-            final authCubit = context.read<AuthCubit>();
-            await authCubit.sendOtp(_phoneController.text);
-            GoRouter.of(context).push(AppRouter.kOTPScreen);
+            // final authCubit = context.read<AuthCubit>();
+            // await authCubit.sendOtp(_phoneController.text);
+            // GoRouter.of(context).push(AppRouter.kOTPScreen);
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),

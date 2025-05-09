@@ -15,7 +15,7 @@ class rowWidget extends StatefulWidget {
       this.isNoti = false});
 
   final String title;
-  final String icon;
+  final dynamic icon;
   final bool isFirst;
   final bool isLast;
   final bool isNoti;
@@ -47,11 +47,12 @@ class _rowWidgetState extends State<rowWidget> {
                   : null,
         ),
         child: ListTile(
-          leading: SvgPicture.asset(
+          leading: widget.icon.runtimeType == String ?
+          SvgPicture.asset(
             widget.icon,
             width: 20.w,
             height: 20.h,
-          ),
+          ) : Icon(widget.icon, size: 20.sp),
           title: Text(
             widget.title,
             style: TextStyle(

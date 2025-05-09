@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/add_post_screens/add_post_step_1_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/add_post_screens/add_post_step_2_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/notifications_screen.dart';
+import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/category_details_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/main_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/add_member_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/edit_screen.dart';
@@ -15,6 +16,8 @@ import 'package:safqa_app/presentation/screens/login_screens/sign_up_screen.dart
 import 'package:safqa_app/presentation/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:safqa_app/presentation/screens/splash_screen/splash_screen.dart';
 
+import '../../data/models/category_model.dart';
+
 abstract class AppRouter {
   static const kOnBoardingScreen = '/onBoardingScreen';
   static const kSignupScreen = '/signupScreen';
@@ -23,6 +26,7 @@ abstract class AppRouter {
   static const kResetPasswordScreen = '/resetPasswordScreen';
   static const kOTPScreen = '/otpScreen';
   static const kMainScreen = '/mainScreen';
+  static const kCategoryDetailsScreen = '/categoryDetails';
   static const kNotificationsScreen = '/notificationsScreen';
   static const kAddPostStep1Screen = '/addPostStep1Screen';
   static const kAddPostStep2Screen = '/addPostStep2Screen';
@@ -63,7 +67,17 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: kMainScreen,
-        builder: (context, state) => const MainScreen(),
+        builder: (context, state) {
+
+          return  MainScreen();
+        }
+      ),
+      GoRoute(
+        path: kCategoryDetailsScreen,
+        builder: (context, state){
+          final categoryModel= state.extra as CategoryModel;
+          return CategoryDetailsScreen(categoryModel:categoryModel);
+        },
       ),
       GoRoute(
         path: kNotificationsScreen,

@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:safqa_app/core/api/api_constants.dart';
+import 'package:safqa_app/data/models/category_model.dart';
+import 'package:safqa_app/data/models/city_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ApiService {
+class ApiHomeService {
   final Dio _dio;
 
-  ApiService()
+  ApiHomeService()
       : _dio = Dio(
           BaseOptions(
             baseUrl: ApiConstants.baseUrl,
@@ -40,24 +42,39 @@ class ApiService {
           request: true, requestBody: true, responseBody: true, error: true),
     ]);
   }
-  Future<Response<dynamic>> login(Map<String, dynamic> data) async {
-    return await _dio.post('/api/v1/auth/token', data: data);
+
+  //get categories
+
+  Future<List<CategoryModel>> getCategories() async {
+    try {
+      final response = await _dio.get('/v1/categories');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((category) => CategoryModel.fromJson(category)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
   }
 
-  Future<Response<dynamic>> post(String endpoint,
-      {Map<String, dynamic>? data}) async {
-    return await _dio.post(
-      endpoint,
-      data: data,
-      options: Options(
-        headers: {"Content-Type": "application/json"},
-      ),
-    );
+  Future<List<CityModel>> getCities() async {
+    try {
+      final response = await _dio.get('/v1/cities');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((city) => CityModel.fromJson(city)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
   }
 
-  Future<Response<dynamic>> register(Map<String, dynamic> data) async {
-    return await _dio.post('/api/v1/auth/register', data: data);
-  }
 
   Future<String?> _getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();

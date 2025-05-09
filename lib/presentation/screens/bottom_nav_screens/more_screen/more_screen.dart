@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safqa_app/core/constants.dart';
 import 'package:safqa_app/core/utils/app_icons.dart';
 import 'package:safqa_app/core/utils/app_router.dart';
+import 'package:safqa_app/data/auth_cubit/auth_cubit.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/widgets/edit_button.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/widgets/header_widget.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/widgets/row_widget.dart';
@@ -18,7 +20,7 @@ class MoreScreen extends StatelessWidget {
       backgroundColor: const Color(0xffF7F7F7),
       body: Padding(
         padding: EdgeInsets.only(
-          top: 64.h,
+          top: 40.h,
           left: 16.w,
           right: 16.w,
           bottom: 16.h,
@@ -35,7 +37,7 @@ class MoreScreen extends StatelessWidget {
             ),
             const EditButton(),
             SizedBox(
-              height: 32.h,
+              height: 20.h,
             ),
             rowWidget(
               title: "منشوراتي",
@@ -105,6 +107,15 @@ class MoreScreen extends StatelessWidget {
               onTap: () {},
               title: "سياسة الخصوصية",
               icon: AppIcons.privcy,
+              isLast: true,
+            ),
+
+            rowWidget(
+              onTap: ()async {
+               await context.read<AuthCubit>().logout(context);
+              },
+              title: "تسجيل الخروج",
+              icon: Icons.logout,
               isLast: true,
             ),
           ],

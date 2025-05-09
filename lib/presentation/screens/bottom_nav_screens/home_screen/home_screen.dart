@@ -1,10 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:safqa_app/core/constants.dart';
 import 'package:safqa_app/core/utils/app_assets.dart';
 import 'package:safqa_app/core/utils/app_icons.dart';
+import 'package:safqa_app/core/utils/app_router.dart';
+import 'package:safqa_app/data/models/category_model.dart';
+import 'package:safqa_app/data/home_cubit/home_cubit.dart';
+import 'package:safqa_app/data/home_cubit/home_state.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/map_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/custom_product_vert_widget.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/custom_product_widget.dart';
@@ -13,6 +19,8 @@ import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/wi
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/region_bottom_sheet.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/search_widget.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/types_widget.dart';
+
+import '../../../../data/models/city_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,22 +51,27 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'أٌخرى', 'image': AppAssets.other},
   ];
   List<String> imagePaths = [AppAssets.ipadPro, AppAssets.homeCar];
-  void _showRegionBottomSheet(BuildContext context) {
+  void _showRegionBottomSheet(BuildContext ctx) {
     showModalBottomSheet(
       scrollControlDisabledMaxHeightRatio: 0.74,
       context: context,
-
       //  isScrollControlled: true, // لجعل الـ BottomSheet يأخذ الحجم المناسب
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(16),
         ),
       ),
-      builder: (context) => RegionFilterBottomSheet(),
-    ).then((selectedRegions) {
-      if (selectedRegions != null) {
-        // يمكنك التعامل مع المناطق المختارة هنا
-      }
+      builder: (ctx) => RegionFilterBottomSheet(ctx),
+    ).then((_) {
+     // List<CityModel> selectedRegions=  context.read<HomeCubit>().state.cities.where((element) {
+     //    return element.isSelected== true;
+     //  },).toList();
+
+      print(
+        context.read<HomeCubit>().state.selectedRegions
+            .map((e) => e.nameAr)
+            .toList(),
+      );
     });
   }
 
@@ -80,25 +93,53 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 32.h),
 
             // GridView - الفئات
-            SizedBox(
-              height: 190.h,
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: items.length,
-                clipBehavior: Clip.none,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 10.w,
-                  mainAxisSpacing: 15.h,
-                  childAspectRatio: 0.9,
-                ),
-                itemBuilder: (context, index) {
-                  return TypesWidget(
-                    name: items[index]['name']!,
-                    image: items[index]['image']!,
-                  );
-                },
-              ),
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                switch (state.categoryStatus) {
+                  case CategoryStatus.initial:
+                  case CategoryStatus.loading:
+                    return const Center(child: CircularProgressIndicator());
+                  case CategoryStatus.success:
+                    List<CategoryModel> items = state.categories;
+                    return SizedBox(
+                      height: 190.h,
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: items.length,
+                        clipBehavior: Clip.none,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 10.w,
+                          mainAxisSpacing: 15.h,
+                          childAspectRatio: 0.9,
+                        ),
+                        itemBuilder: (context, index) {
+                          return TypesWidget(
+                            name: items[index].name,
+                            onTap: () async{
+                              // await  context.read<HomeCubit>().getCategoryDetails(id: items[index].id);
+                              //  await GoRouter.of(context).push(
+                              //   AppRouter.kCategoryDetailsScreen,
+                              //    extra: items[index],
+                              // );
+
+                            },
+                            image: items[index].image?? AppAssets.car,
+                          );
+                        },
+                      ),
+                    );
+
+                  case CategoryStatus.failure:
+                    return  Center(
+                      child: Text(
+                        state.errorMessage!,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
+                }
+              },
             ),
 
             SizedBox(height: 30.h),

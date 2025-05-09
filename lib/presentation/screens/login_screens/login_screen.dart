@@ -141,13 +141,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     GoRouter.of(context).push(AppRouter.kMainScreen);
                   } else if (state is AuthFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('خطأ: ${state.message}')),
+                      SnackBar(content: Text('${state.message}')),
                     );
                   }
                 },
                 builder: (context, state) {
                   if (state is AuthLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   return CustomButton(
                     onTap: () {
@@ -163,7 +163,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 178.h,
               ),
               footerWidget(
-                  onTap: () {}, text1: ' ليس لديك حساب؟ ', text2: 'إنشاء حساب'),
+                  onTap: () {
+                    GoRouter.of(context).push(AppRouter.kSignupScreen);
+                  }, text1: ' ليس لديك حساب؟ ', text2: 'إنشاء حساب'),
             ],
           ),
         ),

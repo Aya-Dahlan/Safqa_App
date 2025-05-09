@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:safqa_app/core/api/api_service.dart';
+import 'package:safqa_app/core/api/api_auth_service.dart';
 import 'package:safqa_app/core/services/device_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
-  final ApiService _apiService = ApiService();
+  final ApiAuthService _apiService = ApiAuthService();
 
   Future<void> _saveAuthData(
       String accessToken, String refreshToken, int expiresInSeconds) async {
@@ -122,7 +122,7 @@ class AuthRepository {
   Future<Map<String, dynamic>> sendOtp(String phone) async {
     try {
       debugPrint("📤 Request Data: $phone");
-      final response = await _apiService.post('/api/v1/auth/otp', data: {
+      final response = await _apiService.post('/v1/auth/otp', data: {
         "phone": phone,
       });
       debugPrint("📥 Response: ${response.data}");

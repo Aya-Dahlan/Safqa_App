@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:safqa_app/core/utils/app_router.dart';
 import 'package:safqa_app/data/auth_cubit/auth_state.dart';
 import 'package:safqa_app/data/repos/auth_repo.dart';
 
@@ -27,7 +30,7 @@ class AuthCubit extends Cubit<AuthState> {
       String confirmPassword) async {
     emit(AuthLoading());
     final response =
-        await _authRepository.register(name, phone, password, confirmPassword);
+    await _authRepository.register(name, phone, password, confirmPassword);
 
     if (response['success']) {
       emit(AuthSuccess(response['data']));
@@ -69,5 +72,17 @@ class AuthCubit extends Cubit<AuthState> {
     } else {
       emit(AuthFailure(response['message']));
     }
+  }
+
+
+  /// ❌ تسجيل خروج المستخدم
+  ///
+
+  Future<void> logout(BuildContext context) async {
+
+    await _authRepository.logout();
+
+    GoRouter.of(context).go(AppRouter.kLoginScreen);
+    emit(AuthLogoutSuccess());
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/chats_screen/chats_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/favorite_screen/favorite_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/home_screen.dart';
@@ -6,7 +7,9 @@ import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/mo
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/widgets/custom_bottom_nav.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+   MainScreen({super.key,});
+
+
 
   @override
   State<MainScreen> createState() => _MainScreenState();

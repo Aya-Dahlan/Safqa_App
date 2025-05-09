@@ -1,3 +1,3 @@
 class ApiConstants {
-  static const String baseUrl = "https://safqa.moelsaka.com";
+  static const String baseUrl = "https://api.safqaa.net";
 }

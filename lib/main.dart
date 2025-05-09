@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:safqa_app/core/api/api_service.dart';
+import 'package:safqa_app/core/api/api_auth_service.dart';
 import 'package:safqa_app/core/services/device_service.dart';
 import 'package:safqa_app/core/utils/app_router.dart';
 import 'package:safqa_app/data/auth_cubit/auth_cubit.dart';
+import 'package:safqa_app/data/home_cubit/home_cubit.dart';
 import 'package:safqa_app/data/repos/auth_repo.dart';
+import 'package:safqa_app/data/repos/home_repo.dart';
 import 'package:safqa_app/firebase_options.dart';
 
 void main() async {
@@ -42,6 +44,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(AuthRepository()),
+          ),
+          BlocProvider(
+            create: (context) => HomeCubit(HomeRepository())..loadHomeData(),
           ),
         ],
         child: MaterialApp.router(

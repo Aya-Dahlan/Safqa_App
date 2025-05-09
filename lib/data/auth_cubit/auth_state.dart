@@ -10,6 +10,9 @@ class AuthSuccess extends AuthState {
   AuthSuccess(this.userData);
 }
 
+
+class AuthLogoutSuccess extends AuthState {}
+
 class AuthFailure extends AuthState {
   final String message;
   AuthFailure(this.message);
