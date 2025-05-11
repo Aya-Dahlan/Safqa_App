@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,12 +14,22 @@ import 'package:safqa_app/data/repos/auth_repo.dart';
 import 'package:safqa_app/data/repos/home_repo.dart';
 import 'package:safqa_app/firebase_options.dart';
 
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print("Handling a background message: ${message.messageId}");
+}
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await _setupFirebaseMessaging();
   await DeviceService.getDeviceInfo();
 
   runApp(
@@ -29,6 +40,58 @@ void main() async {
         fallbackLocale: const Locale('ar'),
         child: const MyApp()),
   );
+}
+
+Future<void> _setupFirebaseMessaging() async {
+  // Set the background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Request permission for iOS
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Request permission (required for iOS)
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+
+  // Get the token
+  try {
+    String? token = await messaging.getToken();
+    print('FCM Token: $token');
+
+    // For iOS, specifically check for APNS token
+    String? apnsToken = await messaging.getAPNSToken();
+    print('APNS Token: $apnsToken');
+
+    // If the APNS token is null on iOS, it might not be ready yet
+    if (apnsToken == null) {
+      print("APNS token not available yet. This is normal during initialization.");
+      // You can set up a listener to get the token when it becomes available
+      messaging.onTokenRefresh.listen((token) {
+        print('FCM token refreshed: $token');
+      });
+    }
+  } catch (e) {
+    print('Error getting FCM token: $e');
+  }
+
+  // Configure foreground message handling
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {

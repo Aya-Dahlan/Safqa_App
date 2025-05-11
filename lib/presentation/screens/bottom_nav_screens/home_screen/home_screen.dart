@@ -40,16 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
     SvgPicture.asset(AppIcons.location),
   ];
 
-  List<Map<String, String>> items = [
-    {'name': 'سيارات', 'image': AppAssets.car},
-    {'name': 'عقارات', 'image': AppAssets.buildings},
-    {'name': 'أثاث', 'image': AppAssets.furn},
-    {'name': 'إلكترونيات', 'image': AppAssets.elect},
-    {'name': 'معدات', 'image': AppAssets.equp},
-    {'name': 'أجهزة المنزلية', 'image': AppAssets.homeAppl},
-    {'name': 'مٌستلزمات', 'image': AppAssets.orange},
-    {'name': 'أٌخرى', 'image': AppAssets.other},
-  ];
+  // List<Map<String, String>> items = [
+  //   {'name': 'سيارات', 'image': AppAssets.car},
+  //   {'name': 'عقارات', 'image': AppAssets.buildings},
+  //   {'name': 'أثاث', 'image': AppAssets.furn},
+  //   {'name': 'إلكترونيات', 'image': AppAssets.elect},
+  //   {'name': 'معدات', 'image': AppAssets.equp},
+  //   {'name': 'أجهزة المنزلية', 'image': AppAssets.homeAppl},
+  //   {'name': 'مٌستلزمات', 'image': AppAssets.orange},
+  //   {'name': 'أٌخرى', 'image': AppAssets.other},
+  // ];
   List<String> imagePaths = [AppAssets.ipadPro, AppAssets.homeCar];
   void _showRegionBottomSheet(BuildContext ctx) {
     showModalBottomSheet(
@@ -90,9 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const NotificationsButton(),
               ],
             ),
-            SizedBox(height: 32.h),
+            SizedBox(height: 20.h),
 
-            // GridView - الفئات
             BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
                 switch (state.categoryStatus) {
@@ -100,7 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   case CategoryStatus.loading:
                     return const Center(child: CircularProgressIndicator());
                   case CategoryStatus.success:
-                    List<CategoryModel> items = state.categories;
+                    List<CategoryModel> items = state.categories.where(
+                      (element) {
+                        return element.parentId == 0;
+                      },
+                    ).toList(
+                    );
                     return SizedBox(
                       height: 190.h,
                       child: GridView.builder(
@@ -118,11 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           return TypesWidget(
                             name: items[index].name,
                             onTap: () async{
-                              // await  context.read<HomeCubit>().getCategoryDetails(id: items[index].id);
-                              //  await GoRouter.of(context).push(
-                              //   AppRouter.kCategoryDetailsScreen,
-                              //    extra: items[index],
-                              // );
+                               // context.read<HomeCubit>().selectCategory(index);
+                               await GoRouter.of(context).push(
+                                AppRouter.kCategoryDetailsScreen,
+                                 extra: items[index],
+                              );
 
                             },
                             image: items[index].image?? AppAssets.car,

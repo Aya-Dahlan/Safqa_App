@@ -42,6 +42,15 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     const SizedBox.shrink(), // بدون أيقونة للأحدث
     SvgPicture.asset(AppIcons.location),
   ];
+  // final dynamic data= v
+  initState() {
+    super.initState();
+
+    //
+    // context.read<HomeCubit>().getDetailsCategory(
+    //   context.read<HomeCubit>().state.selectedCategory!.id
+    // );
+  }
 
   List<Map<String, String>> items = [
     {'name': 'سيارات', 'image': AppAssets.car},
@@ -80,212 +89,264 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // print(context.read<HomeCubit>().state.selectedCategory!.id);
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(top: 68.h, left: 16.w, right: 16.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: arrowBackWidget(context),
-                  ),
-                  const SearchWidget(),
-                ],
-              ),
-              SizedBox(height: 10.h),
-
-              // GridView - الفئات
-              // BlocBuilder<HomeCubit, HomeState>(
-              //   builder: (context, state) {
-              //     switch (state.categoryStatus) {
-              //       case CategoryStatus.initial:
-              //       case CategoryStatus.loading:
-              //         return const Center(child: CircularProgressIndicator());
-              //       case CategoryStatus.success:
-              //         List<CategoryModel> items = state.categories;
-              //         return SizedBox(
-              //           height: 190.h,
-              //           child: GridView.builder(
-              //             physics: const NeverScrollableScrollPhysics(),
-              //             padding: EdgeInsets.zero,
-              //             itemCount: items.length,
-              //             clipBehavior: Clip.none,
-              //             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              //               crossAxisCount: 4,
-              //               crossAxisSpacing: 10.w,
-              //               mainAxisSpacing: 15.h,
-              //               childAspectRatio: 0.9,
-              //             ),
-              //             itemBuilder: (context, index) {
-              //               return TypesWidget(
-              //                 name: items[index].name,
-              //                 onTap: (){
-              //
-              //                 },
-              //                 image: items[index].image?? AppAssets.car,
-              //               );
-              //             },
-              //           ),
-              //         );
-              //
-              //       case CategoryStatus.failure:
-              //         return  Center(
-              //           child: Text(
-              //             state.errorMessage!,
-              //             style: TextStyle(fontSize: 16),
-              //           ),
-              //         );
-              //     }
-              //   },
-              // ),
-
-              Text(
-                categoryModel.name,
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    //  color: kTextColorLight,
-                    fontWeight: FontWeight.w700),
-              ),
-
-              SizedBox(height: 10.h),
-
-
-
-              SizedBox(height: 30.h),
-
-              // شريط التبويبات
-              Row(
-                children: [
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(tabs.length, (index) {
-                      bool isSelected = selectedIndex == index;
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = index;
-                            if (index == 0) {
-                              _showRegionBottomSheet(
-                                  context); // فتح الـ Bottom Sheet عند الضغط على "المنطقة"
-                            }
-                            if (index == 2) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MapScreen(),
-                                ),
-                              );
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: index == 1
-                              ? 61.w
-                              : index == 2
-                              ? 73.w
-                              : 101.w, // الأحدث أصغر حجمًا
-                          height: 32.h,
-                          margin: EdgeInsets.symmetric(horizontal: 4.w),
-                          decoration: BoxDecoration(
-                            color: isSelected ? kPrimaryColor : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border:
-                            Border.all(color: kPrimaryColor, width: 0.5.w),
+      body: BlocBuilder<HomeCubit,HomeState>(
+        builder: (context,state){
+          switch(state.categoryDetailsStatus){
+            case CategoryDetailsStatus.loading:
+              return const Center(child: CircularProgressIndicator());
+            case CategoryDetailsStatus.initial:
+            case CategoryDetailsStatus.success:
+              List<CategoryModel> items= state.categories.where(
+                      (element) {
+                        return element.parentId == categoryModel.id;
+                      }
+              ).toList();
+              return Padding(
+                padding: EdgeInsets.only(top: 68.h, left: 16.w, right: 16.w),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: arrowBackWidget(context),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (index !=
-                                  1) // عرض الأيقونة فقط إذا لم يكن التبويب هو "الأحدث"
-                                SvgPicture.asset(
-                                  index == 0
-                                      ? AppIcons.arrowDown
-                                      : AppIcons.location,
-                                  color:
-                                  isSelected ? Colors.white : kPrimaryColor,
-                                ),
-                              if (index != 1)
-                                SizedBox(width: 4.w), // تباعد بين الأيقونة والنص
+                          const SearchWidget(),
+                        ],
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        categoryModel.name,
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            //  color: kTextColorLight,
+                            fontWeight: FontWeight.w700),
+                      ),
 
-                              Text(
-                                tabs[index],
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color:
-                                  isSelected ? Colors.white : kPrimaryColor,
-                                ),
-                              ),
-                            ],
+                      SizedBox(height: 10.h),
+
+                      _buildCategoryTabs(items:items,state: state),
+                      if(state.subCategories.isNotEmpty) ...[
+
+                        SizedBox(height: 14.h),
+                        SizedBox(
+                          height: 18.h,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.subCategories.length,
+                            itemBuilder: (context, index) {
+
+                              return Text( state.subCategories[index].name);
+                            },
+                            separatorBuilder:  (context, index) => SizedBox(
+                              width: 10.w,
+                            ),
                           ),
                         ),
-                      );
-                    }),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isGridView = !isGridView; // تغيير طريقة العرض عند الضغط
-                        });
-                      },
-                      child: DisplayMethodWidget(
-                        isGridView: isGridView,
-                        onTap: () {
-                          setState(() {
-                            isGridView = !isGridView; // تغيير الحالة عند الضغط
-                          });
+
+                      ],
+
+
+
+                      SizedBox(height: 30.h),
+
+                      // شريط التبويبات
+                      Row(
+                        children: [
+                          Row(
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(tabs.length, (index) {
+                              bool isSelected = selectedIndex == index;
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = index;
+                                    if (index == 0) {
+                                      _showRegionBottomSheet(
+                                          context);
+                                    }
+                                    if (index == 2) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MapScreen(),
+                                        ),
+                                      );
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  width: index == 1
+                                      ? 61.w
+                                      : index == 2
+                                      ? 73.w
+                                      : 101.w, // الأحدث أصغر حجمًا
+                                  height: 32.h,
+                                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? kPrimaryColor : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border:
+                                    Border.all(color: kPrimaryColor, width: 0.5.w),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (index !=
+                                          1) // عرض الأيقونة فقط إذا لم يكن التبويب هو "الأحدث"
+                                        SvgPicture.asset(
+                                          index == 0
+                                              ? AppIcons.arrowDown
+                                              : AppIcons.location,
+                                          color:
+                                          isSelected ? Colors.white : kPrimaryColor,
+                                        ),
+                                      if (index != 1)
+                                        SizedBox(width: 4.w), // تباعد بين الأيقونة والنص
+
+                                      Text(
+                                        tabs[index],
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                          isSelected ? Colors.white : kPrimaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isGridView = !isGridView; // تغيير طريقة العرض عند الضغط
+                                });
+                              },
+                              child: DisplayMethodWidget(
+                                isGridView: isGridView,
+                                onTap: () {
+                                  setState(() {
+                                    isGridView = !isGridView; // تغيير الحالة عند الضغط
+                                  });
+                                },
+                              ))
+                        ],
+                      ),
+
+                      SizedBox(height: 16.7.h),
+                      // عرض المنتجات حسب الحالة
+                      isGridView
+                          ? GridView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // عرض منتجين في كل صف
+                          crossAxisSpacing: 10.w,
+                          mainAxisSpacing: 10.h,
+
+                          childAspectRatio: 0.1,
+                        ),
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return const CustomProductWidget(
+                            imagePaths: [AppAssets.ipadPro, AppAssets.car],
+                            title: 'آيباد برو',
+                            owner: 'ناصر العتيبي',
+                            price: '3000 ريال ',
+                            location: 'الرياض-حي ظهرة لبن',
+                            duration: '3 أيام',
+                            isNew: true,
+                          );
                         },
-                      ))
-                ],
-              ),
-
-              SizedBox(height: 16.7.h),
-              // عرض المنتجات حسب الحالة
-              isGridView
-                  ? GridView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                // physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // عرض منتجين في كل صف
-                  crossAxisSpacing: 10.w,
-                  mainAxisSpacing: 10.h,
-
-                  childAspectRatio: 0.1,
+                      )
+                          : Column(
+                        children: List.generate(4, (index) {
+                          return const CustomProductVertWidget(
+                            imagePath: AppAssets.ipadPro,
+                            title: 'آيباد برو',
+                            owner: 'ناصر العتيبي',
+                            price: '3000 ريال ',
+                            location: 'الرياض-حي ظهرة لبن',
+                            duration: '3 أيام',
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return const CustomProductWidget(
-                    imagePaths: [AppAssets.ipadPro, AppAssets.car],
-                    title: 'آيباد برو',
-                    owner: 'ناصر العتيبي',
-                    price: '3000 ريال ',
-                    location: 'الرياض-حي ظهرة لبن',
-                    duration: '3 أيام',
-                    isNew: true,
-                  );
-                },
-              )
-                  : Column(
-                children: List.generate(4, (index) {
-                  return const CustomProductVertWidget(
-                    imagePath: AppAssets.ipadPro,
-                    title: 'آيباد برو',
-                    owner: 'ناصر العتيبي',
-                    price: '3000 ريال ',
-                    location: 'الرياض-حي ظهرة لبن',
-                    duration: '3 أيام',
-                  );
-                }),
+              );
+
+            case CategoryDetailsStatus.failure:
+              return Center(
+                child: Text(
+                  state.errorMessage!,
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs({required List<CategoryModel> items,required HomeState state}) {
+    return SizedBox(
+      height: 34.h,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        padding: EdgeInsets.zero,
+        // padding: EdgeInsets.symmetric(horizontal: 10.w),
+        itemBuilder: (context, index) {
+          bool isSelected = state.selectedCategory == items[index];
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6.w),
+            child: GestureDetector(
+              onTap: () {
+                context.read<HomeCubit>().selectCategory(index,items[index].id);
+              },
+              //#2E5579
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                decoration: BoxDecoration(
+                  color:isSelected ? kPrimaryColor : Colors.white,
+                   // Colors.white,
+                    // _selectedCategoryIndex == index
+                    //   ? const Color(0xFF34516C)
+                    //   : ,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: Color(0xff2E5579),
+                    width: 1,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    items[index].name,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.white : kPrimaryColor,
+                      // color: Colors.black
+                      // _selectedCategoryIndex == index
+                      //     ? Colors.white
+                      //     : Colors.black,
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

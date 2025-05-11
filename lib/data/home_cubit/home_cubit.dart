@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/data/models/city_model.dart';
 import 'package:safqa_app/data/repos/home_repo.dart';
 
@@ -28,6 +29,53 @@ class HomeCubit extends Cubit<HomeState>{
   }
 
 
+  //filter category
+
+  filterCategory(int id,int index){
+    List<CategoryModel> newCategories= state.categories.where(
+            (element) {
+          return element.parentId == id;
+        }
+    ).toList();
+
+
+    emit(
+      state.copyWith(
+        subCategories: newCategories
+      )
+    );
+  }
+
+
+  // select category
+
+  void selectCategory(int index,int id) {
+
+    List<CategoryModel> newCategories= state.categories.where(
+            (element) {
+          return element.parentId == id;
+        }
+    ).toList();
+
+
+
+    for (var element in state.categories) {
+      element.isSelected = false;
+    }
+    state.categories[index].isSelected = true;
+
+    emit(
+      state.copyWith(
+        selectedCategory: state.categories[index],
+        categories: state.categories,
+        subCategories: newCategories
+      )
+    );
+
+
+  }
+
+
 
   selectRegion(int index) {
     state.cities[index].isSelected =
@@ -51,6 +99,7 @@ class HomeCubit extends Cubit<HomeState>{
       final categories = await _homeRepository.getCategories();
       emit(state.copyWith(
         categoryStatus: CategoryStatus.success,
+
         categories: categories,
       ));
     } catch (e) {
@@ -61,6 +110,25 @@ class HomeCubit extends Cubit<HomeState>{
       ));
     }
 
+  }
+
+  // get details category
+
+  Future <void> getDetailsCategory(int parentId) async {
+    emit(state.copyWith(categoryDetailsStatus: CategoryDetailsStatus.loading));
+    try {
+      final subCategories = await _homeRepository.getDetailsCategory(parentId);
+      emit(state.copyWith(
+        categoryDetailsStatus: CategoryDetailsStatus.success,
+        subCategories: subCategories,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        categoryDetailsStatus: CategoryDetailsStatus.failure,
+        errorMessage: e.toString(),
+        categories: [],
+      ));
+    }
   }
 
 

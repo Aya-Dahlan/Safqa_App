@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:safqa_app/core/api/api_constants.dart';
 import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/data/models/city_model.dart';
+import 'package:safqa_app/data/models/sub_category_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiHomeService {
@@ -14,6 +16,7 @@ class ApiHomeService {
             connectTimeout: const Duration(seconds: 5),
             receiveTimeout: const Duration(seconds: 3),
             headers: {'Content-Type': 'application/json'},
+
           ),
         ) {
     _dio.interceptors.addAll([
@@ -39,7 +42,7 @@ class ApiHomeService {
         },
       ),
       LogInterceptor(
-          request: true, requestBody: true, responseBody: true, error: true),
+          request: true, requestBody: true, responseBody: true, error: true,),
     ]);
   }
 
@@ -59,6 +62,43 @@ class ApiHomeService {
       return [];
     }
   }
+
+
+
+  // get details category
+
+  Future <List<CategoryModel>> getDetailsCategory(int parentId) async {
+    try {
+      final response = await _dio.get('/v1/categories?filter[parent_id]=$parentId');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+
+        return data.map((category) => CategoryModel.fromJson(category)).toList();
+
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
+  // Future<List<SubCategoryModel>> getSubCategories() async {
+  //   try {
+  //     final response = await _dio.get('/v1/categories/');
+  //     if (response.statusCode == 200) {
+  //       final data = response.data['data'];
+  //       SubCategoryModel.fromJson(data);
+  //       // return data.map((subCategory) => SubCategoryModel.fromJson(subCategory)).toList();
+  //     } else {
+  //       throw Exception('Failed to load categories');
+  //     }
+  //   } catch (e) {
+  //     print("❌ Error fetching categories: $e");
+  //     return [];
+  //   }
+  // }
+
 
   Future<List<CityModel>> getCities() async {
     try {

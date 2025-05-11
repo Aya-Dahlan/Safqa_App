@@ -30,8 +30,10 @@ class HomeState extends Equatable{
   final CitiesStatus citiesStatus;
   final CategoryDetailsStatus categoryDetailsStatus;
   final List<CategoryModel> categories;
+  final List<CategoryModel> subCategories;
   final List<CityModel> cities;
    List<CityModel> selectedRegions;
+   late CategoryModel? selectedCategory;
   final String? errorMessage;
   // List<bool> selectedRegions= List.generate(7, (index) => false);
 
@@ -43,7 +45,10 @@ class HomeState extends Equatable{
     this.citiesStatus = CitiesStatus.initial,
     this.categoryDetailsStatus = CategoryDetailsStatus.initial,
     this.categories = const [],
+    this.subCategories = const [],
     this.cities = const [],
+    this.selectedCategory,
+
 
     this.selectedRegions = const [],
 
@@ -56,8 +61,10 @@ class HomeState extends Equatable{
     CitiesStatus? citiesStatus,
     CategoryDetailsStatus? categoryDetailsStatus,
     List<CategoryModel>? categories,
+    List<CategoryModel>? subCategories,
     List<CityModel>? cities,
     List<CityModel>? selectedRegions,
+    CategoryModel? selectedCategory,
     String? errorMessage,
   }) {
     return HomeState(
@@ -65,7 +72,9 @@ class HomeState extends Equatable{
       citiesStatus: citiesStatus ?? this.citiesStatus,
       categoryDetailsStatus: categoryDetailsStatus ?? this.categoryDetailsStatus,
       categories: categories ??this.categories,
+      subCategories: subCategories ??this.subCategories,
       cities: cities ?? this.cities,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
       selectedRegions: selectedRegions ?? this.selectedRegions,
       errorMessage: errorMessage ??this.errorMessage,
     );
@@ -77,7 +86,9 @@ class HomeState extends Equatable{
     citiesStatus,
     categoryDetailsStatus,
     categories,
+    subCategories,
     cities,
+    selectedCategory,
     selectedRegions,
     errorMessage,
   ];
