@@ -11,6 +11,7 @@ import 'package:safqa_app/core/utils/app_router.dart';
 import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/data/home_cubit/home_cubit.dart';
 import 'package:safqa_app/data/home_cubit/home_state.dart';
+import 'package:safqa_app/data/models/post_model.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/map_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/custom_product_vert_widget.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/custom_product_widget.dart';
@@ -62,16 +63,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       builder: (ctx) => RegionFilterBottomSheet(ctx),
-    ).then((_) {
-     // List<CityModel> selectedRegions=  context.read<HomeCubit>().state.cities.where((element) {
-     //    return element.isSelected== true;
-     //  },).toList();
+    ).then((_) async{
+      // List<CityModel> selectedRegions=  context.read<HomeCubit>().state.cities.where((element) {
+      //    return element.isSelected== true;
+      //  },).toList();
 
-      print(
-        context.read<HomeCubit>().state.selectedRegions
-            .map((e) => e.nameAr)
-            .toList(),
-      );
+      // print(
+      //   context
+      //       .read<HomeCubit>()
+      //       .state
+      //       .selectedRegions
+      //       .map((e) => e.nameAr)
+      //       .toList(),
+      await context.read<HomeCubit>().getPostsRegions();
+
     });
   }
 
@@ -103,8 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       (element) {
                         return element.parentId == 0;
                       },
-                    ).toList(
-                    );
+                    ).toList();
                     return SizedBox(
                       height: 190.h,
                       child: GridView.builder(
@@ -121,22 +125,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           return TypesWidget(
                             name: items[index].name,
-                            onTap: () async{
-                               // context.read<HomeCubit>().selectCategory(index);
-                               await GoRouter.of(context).push(
+                            onTap: () async {
+                              // context.read<HomeCubit>().selectCategory(index);
+                              await GoRouter.of(context).push(
                                 AppRouter.kCategoryDetailsScreen,
-                                 extra: items[index],
+                                extra: items[index],
                               );
-
                             },
-                            image: items[index].image?? AppAssets.car,
+                            image: items[index].image ?? AppAssets.car,
                           );
                         },
                       ),
                     );
 
                   case CategoryStatus.failure:
-                    return  Center(
+                    return Center(
                       child: Text(
                         state.errorMessage!,
                         style: TextStyle(fontSize: 16),
@@ -156,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: List.generate(tabs.length, (index) {
                     bool isSelected = selectedIndex == index;
                     return GestureDetector(
-                      onTap: () {
+                      onTap: () async{
                         setState(() {
                           selectedIndex = index;
                           if (index == 0) {
@@ -171,7 +174,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           }
+
+
                         });
+
+                        if(index == 1){
+                          await context.read<HomeCubit>().getNewestPosts();
+                        }
+
                       },
                       child: Container(
                         width: index == 1
@@ -237,43 +247,63 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SizedBox(height: 16.7.h),
             // عرض المنتجات حسب الحالة
-            isGridView
-                ? GridView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    // physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // عرض منتجين في كل صف
-                      crossAxisSpacing: 10.w,
-                      mainAxisSpacing: 10.h,
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                switch (state.postsStatus) {
+                  case PostsStatus.initial:
+                  case PostsStatus.loading:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case PostsStatus.success:
+                    return isGridView
+                        ? GridView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            // physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // عرض منتجين في كل صف
+                              crossAxisSpacing: 10.w,
+                              mainAxisSpacing: 10.h,
 
-                      childAspectRatio: 0.1,
-                    ),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return const CustomProductWidget(
-                        imagePaths: [AppAssets.ipadPro, AppAssets.car],
-                        title: 'آيباد برو',
-                        owner: 'ناصر العتيبي',
-                        price: '3000 ريال ',
-                        location: 'الرياض-حي ظهرة لبن',
-                        duration: '3 أيام',
-                        isNew: true,
-                      );
-                    },
-                  )
-                : Column(
-                    children: List.generate(4, (index) {
-                      return const CustomProductVertWidget(
-                        imagePath: AppAssets.ipadPro,
-                        title: 'آيباد برو',
-                        owner: 'ناصر العتيبي',
-                        price: '3000 ريال ',
-                        location: 'الرياض-حي ظهرة لبن',
-                        duration: '3 أيام',
-                      );
-                    }),
-                  ),
+                              childAspectRatio: 0.1,
+                            ),
+                            itemCount: state.posts!.length,
+                            itemBuilder: (context, index) {
+                              PostModel post= state.posts![index];
+
+                              return CustomProductWidget(
+                                imagePaths: post.galleryToStringList(),
+                                title: post.title!,
+                                owner: post.user!.name!,
+                                price: '${post.price!} ريال ',
+                                location: '${post.region!.name} - ${post.district!.name}',
+                                duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                                isNew: DateTime.now().difference(DateTime.parse(post.createdAt!)).inDays <7 ?true:false,
+                              );
+                            },
+                          )
+                        : Column(
+                            children: List.generate(state.posts!.length, (index) {
+                              PostModel post= state.posts![index];
+                              print(post.region!.name);
+                              return  CustomProductVertWidget(
+                                imagePath: post.gallery![0].original!,
+                                title:post.title!,
+                                owner:post.user!.name!,
+                                price: '${post.price!} ريال ',
+                                location: '${post.region!.name}-${post.district!.name}',
+                                duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                              );
+                            }),
+                          );
+
+                  case PostsStatus.failure:
+                    return Text(state.errorMessage!);
+                }
+              },
+            )
           ],
         ),
       ),

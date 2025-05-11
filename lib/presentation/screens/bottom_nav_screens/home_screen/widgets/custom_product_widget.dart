@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,18 +61,19 @@ class _CustomProductWidgetState extends State<CustomProductWidget> {
                 CarouselSlider(
                   carouselController: _carouselController,
                   items: widget.imagePaths.map((path) {
-                    return Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      height: 161.h,
-                      width: 163.w,
-                      child: Image.asset(
-                        path,
-                        fit: BoxFit.fill,
-                      ),
-                    );
+                    // return Container(
+                    //   clipBehavior: Clip.antiAlias,
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(8),
+                    //   ),
+                    //   height: 161.h,
+                    //   width: 163.w,
+                    //   child: Image.asset(
+                    //     path,
+                    //     fit: BoxFit.fill,
+                    //   ),
+                    // );
+                    return CachedNetworkImage(imageUrl: path);
                   }).toList(),
                   options: CarouselOptions(
                     onPageChanged: (index, reason) {
@@ -168,7 +170,7 @@ class _CustomProductWidgetState extends State<CustomProductWidget> {
             Text(
               widget.title,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xff0C0B19),
               ),
@@ -186,22 +188,16 @@ class _CustomProductWidgetState extends State<CustomProductWidget> {
             Text(
               widget.price,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 12.sp,
                 color: const Color(0xffFFC200),
                 fontWeight: FontWeight.w500,
               ),
             ),
             SizedBox(height: 8.h),
-            Row(
-              children: [
-                SvgPicture.asset(AppIcons.location),
-                SizedBox(width: 8.w),
-                Text(
-                  widget.location,
-                  style:
-                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w300),
-                )
-              ],
+            Text(
+              widget.location,
+              style:
+              TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w300),
             ),
             SizedBox(height: 8.h),
             Row(

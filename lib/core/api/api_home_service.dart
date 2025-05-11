@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:safqa_app/core/api/api_constants.dart';
 import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/data/models/city_model.dart';
+import 'package:safqa_app/data/models/post_model.dart';
 import 'package:safqa_app/data/models/sub_category_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,6 +65,68 @@ class ApiHomeService {
   }
 
 
+  Future<List<PostModel>> getHomePosts() async {
+    try {
+      final response = await _dio.get(ApiConstants.baseHomePosts);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((post) => PostModel.fromJson(post)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
+
+
+
+  Future<List<PostModel>> getPostsByRegionId({int? regionId}) async {
+    try {
+      final response = await _dio.get('${ApiConstants.baseHomePosts}&&filter[region_id]=$regionId');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((post) => PostModel.fromJson(post)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
+
+  Future<List<PostModel>> getNewestPosts() async {
+    try {
+      final response = await _dio.get('${ApiConstants.baseHomePosts}&&sort=-id');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((post) => PostModel.fromJson(post)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
+
+  Future<List<PostModel>> getPostsRegions(String regionsIds) async {
+
+    try {
+      final response = await _dio.get('${ApiConstants.baseHomePosts}&&filter[region_id]=$regionsIds');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((post) => PostModel.fromJson(post)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
 
   // get details category
 

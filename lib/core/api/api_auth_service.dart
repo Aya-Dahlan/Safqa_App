@@ -81,7 +81,7 @@ class ApiAuthService {
 
     try {
       final response = await _dio.post(
-        '/api/v1/auth/token/refresh',
+        '/v1/auth/token/refresh',
         data: {'refresh_token': refreshToken},
       );
 

@@ -1,3 +1,20 @@
 class ApiConstants {
   static const String baseUrl = "https://api.safqaa.net";
+  static const String baseHomePosts = '/v1/listings?'
+      'include=gallery,'
+      'meta,'
+      'user,'
+      'user.avatar,'
+      'user.subscription,'
+      'category,'
+      'region,'
+      'city,'
+      'district,'
+      'latestActivePackage,'
+      'activePackagesExists,'
+      'remainingViews,'
+      'packagesCount,'
+      'followersCount,'
+      'favoritersCount,'
+      'commentsCount';
 }

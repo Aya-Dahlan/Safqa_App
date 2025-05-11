@@ -115,7 +115,7 @@ class _CustomProductVertWidgetState extends State<CustomProductVertWidget> {
                         height: 5.h,
                       ),
                       Text(
-                        widget.title,
+                        widget.title.length>24?widget.title.substring(0,25) :widget.title,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -224,7 +224,7 @@ class _CustomProductVertWidgetState extends State<CustomProductVertWidget> {
                                 Text(
                                   widget.location,
                                   style: TextStyle(
-                                      fontSize: 14.sp,
+                                      fontSize: 10.sp,
                                       fontWeight: FontWeight.w300),
                                 )
                               ],
@@ -240,8 +240,9 @@ class _CustomProductVertWidgetState extends State<CustomProductVertWidget> {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Image.asset(
-                      AppAssets.homeCar,
+                    child:
+                    Image.network(
+                      widget.imagePath,
                       fit: BoxFit.fill,
                     ),
                   ),

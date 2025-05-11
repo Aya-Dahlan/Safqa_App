@@ -20,13 +20,18 @@ class HomeCubit extends Cubit<HomeState>{
     ));
     await Future.wait([
       getCategories(),
-      getCities()
+      getCities(),
+      getHomePosts(),
+
     ]);
     emit(state.copyWith(
       categoryStatus: CategoryStatus.success,
       citiesStatus: CitiesStatus.success,
     ));
   }
+
+
+
 
 
   //filter category
@@ -77,12 +82,11 @@ class HomeCubit extends Cubit<HomeState>{
 
 
 
+
+
   selectRegion(int index) {
     state.cities[index].isSelected =
     !state.cities[index].isSelected!;
-
-
-
     state.selectedRegions = state.cities
         .where((city) => city.isSelected!)
         .toList();
@@ -107,6 +111,72 @@ class HomeCubit extends Cubit<HomeState>{
         categoryStatus: CategoryStatus.failure,
         errorMessage: e.toString(),
         categories: [],
+      ));
+    }
+
+  }
+
+  Future<void> getHomePosts() async{
+
+    emit(state.copyWith(postsStatus: PostsStatus.loading));
+    try {
+      final posts = await _homeRepository.getHomePosts();
+      emit(state.copyWith(
+        postsStatus: PostsStatus.success,
+        posts: posts,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        postsStatus: PostsStatus.failure,
+        errorMessage: e.toString(),
+        posts: [],
+      ));
+    }
+
+  }
+
+
+
+  Future<void> getNewestPosts() async{
+
+    emit(state.copyWith(postsStatus: PostsStatus.loading));
+    try {
+      final posts = await _homeRepository.getNewestPosts();
+      emit(state.copyWith(
+        postsStatus: PostsStatus.success,
+        posts: posts,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        postsStatus: PostsStatus.failure,
+        errorMessage: e.toString(),
+        posts: [],
+      ));
+    }
+
+  }
+
+  Future<void> getPostsRegions() async{
+    emit(state.copyWith(postsStatus: PostsStatus.loading));
+    String ids='';
+    for(int i =0; i< state.selectedRegions.length; i++){
+      ids+= '${state.selectedRegions[i].id!.toString()},';
+    }
+
+    // List<int?> regionsIds= state.selectedRegions.map(
+    //   (e) => e.id,
+    // ).toList();
+    try {
+      final posts = await _homeRepository.getPostsRegions(ids);
+      emit(state.copyWith(
+        postsStatus: PostsStatus.success,
+        posts: posts,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        postsStatus: PostsStatus.failure,
+        errorMessage: e.toString(),
+        posts: [],
       ));
     }
 
