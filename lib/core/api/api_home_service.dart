@@ -65,9 +65,15 @@ class ApiHomeService {
   }
 
 
-  Future<List<PostModel>> getHomePosts() async {
+  Future<List<PostModel>> getHomePosts({int? categoryId}) async {
     try {
-      final response = await _dio.get(ApiConstants.baseHomePosts);
+      final Response<dynamic>  response;
+      if(categoryId !=null){
+     response = await _dio.get('${ApiConstants.baseHomePosts}&&filter[category_id]=$categoryId');
+      }else{
+
+      response = await _dio.get(ApiConstants.baseHomePosts);
+      }
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((post) => PostModel.fromJson(post)).toList();
@@ -97,9 +103,14 @@ class ApiHomeService {
     }
   }
 
-  Future<List<PostModel>> getNewestPosts() async {
+  Future<List<PostModel>> getNewestPosts({int? categoryId}) async {
     try {
-      final response = await _dio.get('${ApiConstants.baseHomePosts}&&sort=-id');
+      final Response<dynamic> response;
+      if(categoryId !=null){
+       response = await _dio.get('${ApiConstants.baseHomePosts}&&sort=-id&&filter[category_id]=$categoryId');
+      }else{
+       response = await _dio.get('${ApiConstants.baseHomePosts}&&sort=-id');
+      }
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((post) => PostModel.fromJson(post)).toList();
@@ -112,10 +123,15 @@ class ApiHomeService {
     }
   }
 
-  Future<List<PostModel>> getPostsRegions(String regionsIds) async {
+  Future<List<PostModel>> getPostsRegions(String regionsIds,{int? categoryId}) async {
 
     try {
-      final response = await _dio.get('${ApiConstants.baseHomePosts}&&filter[region_id]=$regionsIds');
+      final Response<dynamic> response;
+      if(categoryId !=null){
+        response =await _dio.get('${ApiConstants.baseHomePosts}&&filter[category_id]=$categoryId&&filter[region_id]=$regionsIds');
+      }else{
+         response = await _dio.get('${ApiConstants.baseHomePosts}&&filter[region_id]=$regionsIds');
+      }
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((post) => PostModel.fromJson(post)).toList();

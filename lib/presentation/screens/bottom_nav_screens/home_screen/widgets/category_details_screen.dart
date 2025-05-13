@@ -18,6 +18,7 @@ import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/wi
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/search_widget.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/types_widget.dart';
 
+import '../../../../../data/models/post_model.dart';
 import '../../../../widgets/arrow_back_widget.dart';
 
 
@@ -42,14 +43,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     const SizedBox.shrink(), // بدون أيقونة للأحدث
     SvgPicture.asset(AppIcons.location),
   ];
-  // final dynamic data= v
+
   initState() {
     super.initState();
-
-    //
-    // context.read<HomeCubit>().getDetailsCategory(
-    //   context.read<HomeCubit>().state.selectedCategory!.id
-    // );
   }
 
   List<Map<String, String>> items = [
@@ -63,7 +59,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     {'name': 'أٌخرى', 'image': AppAssets.other},
   ];
   List<String> imagePaths = [AppAssets.ipadPro, AppAssets.homeCar];
-  void _showRegionBottomSheet(BuildContext ctx) {
+  void _showRegionBottomSheet(BuildContext ctx,) {
     showModalBottomSheet(
       scrollControlDisabledMaxHeightRatio: 0.74,
       context: context,
@@ -73,23 +69,15 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
           top: Radius.circular(16),
         ),
       ),
-      builder: (ctx) => RegionFilterBottomSheet(ctx),
-    ).then((_) {
-      // List<CityModel> selectedRegions=  context.read<HomeCubit>().state.cities.where((element) {
-      //    return element.isSelected== true;
-      //  },).toList();
+      builder: (ctx) => RegionFilterBottomSheet(ctx,),
+    ).then((_) async{
+      await context.read<HomeCubit>().getPostsRegions(categoryId:categoryModel.id);
 
-      print(
-        context.read<HomeCubit>().state.selectedRegions
-            .map((e) => e.nameAr)
-            .toList(),
-      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // print(context.read<HomeCubit>().state.selectedCategory!.id);
     return Scaffold(
       body: BlocBuilder<HomeCubit,HomeState>(
         builder: (context,state){
@@ -131,7 +119,6 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
 
                       _buildCategoryTabs(items:items,state: state),
                       if(state.subCategories.isNotEmpty) ...[
-
                         SizedBox(height: 14.h),
                         SizedBox(
                           height: 18.h,
@@ -140,14 +127,21 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                             itemCount: state.subCategories.length,
                             itemBuilder: (context, index) {
 
-                              return Text( state.subCategories[index].name);
+                              return GestureDetector(
+                                onTap: (){
+                                  context.read<HomeCubit>().selectSubCategory(index,state.subCategories);
+                                  // print(state.categories[index].name);
+                                },
+                                child: Text( state.subCategories[index].name,style: TextStyle(
+                                    color:state.subCategories[index].isSelected? Color(0xff10375C) : Colors.black
+                                ),),
+                              );
                             },
                             separatorBuilder:  (context, index) => SizedBox(
                               width: 10.w,
                             ),
                           ),
                         ),
-
                       ],
 
 
@@ -162,7 +156,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                             children: List.generate(tabs.length, (index) {
                               bool isSelected = selectedIndex == index;
                               return GestureDetector(
-                                onTap: () {
+                                onTap: () async{
                                   setState(() {
                                     selectedIndex = index;
                                     if (index == 0) {
@@ -178,6 +172,11 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                       );
                                     }
                                   });
+                                  if(index == 1){
+                                    await context.read<HomeCubit>().getNewestPosts(
+                                      categoryId: categoryModel.id
+                                    );
+                                  }
                                 },
                                 child: Container(
                                   width: index == 1
@@ -243,43 +242,101 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
 
                       SizedBox(height: 16.7.h),
                       // عرض المنتجات حسب الحالة
-                      isGridView
-                          ? GridView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        // physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // عرض منتجين في كل صف
-                          crossAxisSpacing: 10.w,
-                          mainAxisSpacing: 10.h,
+                      // isGridView
+                      //     ? GridView.builder(
+                      //   padding: EdgeInsets.zero,
+                      //   shrinkWrap: true,
+                      //   // physics: const NeverScrollableScrollPhysics(),
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 2, // عرض منتجين في كل صف
+                      //     crossAxisSpacing: 10.w,
+                      //     mainAxisSpacing: 10.h,
+                      //
+                      //     childAspectRatio: 0.1,
+                      //   ),
+                      //   itemCount: 4,
+                      //   itemBuilder: (context, index) {
+                      //     return const CustomProductWidget(
+                      //       imagePaths: [AppAssets.ipadPro, AppAssets.car],
+                      //       title: 'آيباد برو',
+                      //       owner: 'ناصر العتيبي',
+                      //       price: '3000 ريال ',
+                      //       location: 'الرياض-حي ظهرة لبن',
+                      //       duration: '3 أيام',
+                      //       isNew: true,
+                      //     );
+                      //   },
+                      // )
+                      //     : Column(
+                      //   children: List.generate(4, (index) {
+                      //     return const CustomProductVertWidget(
+                      //       imagePath: AppAssets.ipadPro,
+                      //       title: 'آيباد برو',
+                      //       owner: 'ناصر العتيبي',
+                      //       price: '3000 ريال ',
+                      //       location: 'الرياض-حي ظهرة لبن',
+                      //       duration: '3 أيام',
+                      //     );
+                      //   }),
+                      // ),
 
-                          childAspectRatio: 0.1,
-                        ),
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return const CustomProductWidget(
-                            imagePaths: [AppAssets.ipadPro, AppAssets.car],
-                            title: 'آيباد برو',
-                            owner: 'ناصر العتيبي',
-                            price: '3000 ريال ',
-                            location: 'الرياض-حي ظهرة لبن',
-                            duration: '3 أيام',
-                            isNew: true,
-                          );
+                      BlocBuilder<HomeCubit, HomeState>(
+                        builder: (context, state) {
+                          switch (state.postsStatus) {
+                            case PostsStatus.initial:
+                            case PostsStatus.loading:
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            case PostsStatus.success:
+                              return state.filterdPosts!.isNotEmpty? isGridView
+                                  ? GridView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                // physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, // عرض منتجين في كل صف
+                                  crossAxisSpacing: 10.w,
+                                  mainAxisSpacing: 10.h,
+
+                                  childAspectRatio: 0.1,
+                                ),
+                                itemCount: state.filterdPosts!.length,
+                                itemBuilder: (context, index) {
+                                  PostModel post= state.filterdPosts![index];
+
+                                  return CustomProductWidget(
+                                    imagePaths: post.galleryToStringList(),
+                                    title: post.title!,
+                                    owner: post.user!.name!,
+                                    price: '${post.price!} ريال ',
+                                    location: '${post.region!.name} - ${post.district!.name}',
+                                    duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                                    isNew: DateTime.now().difference(DateTime.parse(post.createdAt!)).inDays <7 ?true:false,
+                                  );
+                                },
+                              )
+                                  : Column(
+                                children: List.generate(state.filterdPosts!.length, (index) {
+                                  PostModel post= state.filterdPosts![index];
+                                  print(post.region!.name);
+                                  return  CustomProductVertWidget(
+                                    imagePath: post.gallery![0].original!,
+                                    title:post.title!,
+                                    owner:post.user!.name!,
+                                    price: '${post.price!} ريال ',
+                                    location: '${post.region!.name}-${post.district!.name}',
+                                    duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                                  );
+                                }),
+                              ): Center(child: Text('لا يوجد منتجات'),);
+
+                            case PostsStatus.failure:
+                              return Text(state.errorMessage!);
+                          }
                         },
                       )
-                          : Column(
-                        children: List.generate(4, (index) {
-                          return const CustomProductVertWidget(
-                            imagePath: AppAssets.ipadPro,
-                            title: 'آيباد برو',
-                            owner: 'ناصر العتيبي',
-                            price: '3000 ريال ',
-                            location: 'الرياض-حي ظهرة لبن',
-                            duration: '3 أيام',
-                          );
-                        }),
-                      ),
                     ],
                   ),
                 ),
@@ -305,24 +362,18 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         padding: EdgeInsets.zero,
-        // padding: EdgeInsets.symmetric(horizontal: 10.w),
         itemBuilder: (context, index) {
-          bool isSelected = state.selectedCategory == items[index];
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 6.w),
             child: GestureDetector(
               onTap: () {
-                context.read<HomeCubit>().selectCategory(index,items[index].id);
+        context.read<HomeCubit>().selectCategory(index,items[index].id,items);
               },
               //#2E5579
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 decoration: BoxDecoration(
-                  color:isSelected ? kPrimaryColor : Colors.white,
-                   // Colors.white,
-                    // _selectedCategoryIndex == index
-                    //   ? const Color(0xFF34516C)
-                    //   : ,
+                  color:items[index].isSelected ? kPrimaryColor : Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: Color(0xff2E5579),
@@ -335,11 +386,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : kPrimaryColor,
-                      // color: Colors.black
-                      // _selectedCategoryIndex == index
-                      //     ? Colors.white
-                      //     : Colors.black,
+                      color: items[index].isSelected ? Colors.white : kPrimaryColor,
                     ),
                   ),
                 ),

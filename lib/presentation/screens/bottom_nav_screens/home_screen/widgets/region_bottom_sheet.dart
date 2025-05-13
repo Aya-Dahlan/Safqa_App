@@ -10,11 +10,12 @@ import 'package:safqa_app/presentation/widgets/custom_button_widget.dart';
 class RegionFilterBottomSheet extends StatefulWidget {
 
   BuildContext context;
+  int? categoryId;
 
-  RegionFilterBottomSheet(this.context, {Key? key}) : super(key: key);
+  RegionFilterBottomSheet(this.context, {Key? key,this.categoryId}) : super(key: key);
   @override
   _RegionFilterBottomSheetState createState() =>
-      _RegionFilterBottomSheetState(context);
+      _RegionFilterBottomSheetState(context,categoryId:categoryId);
 }
 
 class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
@@ -29,8 +30,9 @@ class _RegionFilterBottomSheetState extends State<RegionFilterBottomSheet> {
   ];
 
   BuildContext ctx;
+  int? categoryId;
 
-  _RegionFilterBottomSheetState(this.ctx);
+  _RegionFilterBottomSheetState(this.ctx,{this.categoryId});
 
   List<bool> selectedRegions = List.generate(7, (index) => false);
 

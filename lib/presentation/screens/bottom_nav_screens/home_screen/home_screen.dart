@@ -64,17 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       builder: (ctx) => RegionFilterBottomSheet(ctx),
     ).then((_) async{
-      // List<CityModel> selectedRegions=  context.read<HomeCubit>().state.cities.where((element) {
-      //    return element.isSelected== true;
-      //  },).toList();
-
-      // print(
-      //   context
-      //       .read<HomeCubit>()
-      //       .state
-      //       .selectedRegions
-      //       .map((e) => e.nameAr)
-      //       .toList(),
       await context.read<HomeCubit>().getPostsRegions();
 
     });
@@ -126,12 +115,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           return TypesWidget(
                             name: items[index].name,
                             onTap: () async {
-                              // context.read<HomeCubit>().selectCategory(index);
+                              context.read<HomeCubit>().getHomePosts(categoryId: items[index].id);
+
                               await GoRouter.of(context).push(
                                 AppRouter.kCategoryDetailsScreen,
                                 extra: items[index],
                               );
                             },
+
                             image: items[index].image ?? AppAssets.car,
                           );
                         },
@@ -256,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: CircularProgressIndicator(),
                     );
                   case PostsStatus.success:
-                    return isGridView
+                    return state.posts!.isNotEmpty? isGridView
                         ? GridView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -297,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 duration: post.parseDate(DateTime.parse(post.updatedAt!)),
                               );
                             }),
-                          );
+                          ): Center(child: Text('لا يوجد منتجات'),);
 
                   case PostsStatus.failure:
                     return Text(state.errorMessage!);

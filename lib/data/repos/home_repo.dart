@@ -27,9 +27,9 @@ class HomeRepository {
       }
     }
 
-    Future<List<PostModel>> getHomePosts() async {
+    Future<List<PostModel>> getHomePosts({int? categoryId}) async {
       try {
-        return _apiService.getHomePosts();
+        return _apiService.getHomePosts(categoryId:categoryId);
 
 
       } catch (e) {
@@ -38,9 +38,9 @@ class HomeRepository {
       }
     }
 
-    Future<List<PostModel>> getNewestPosts() async {
+    Future<List<PostModel>> getNewestPosts({int? categoryId}) async {
       try {
-        return _apiService.getNewestPosts();
+        return _apiService.getNewestPosts(categoryId:categoryId);
 
 
       } catch (e) {
@@ -49,9 +49,9 @@ class HomeRepository {
       }
     }
 
- Future<List<PostModel>> getPostsRegions(String regionsIds) async {
+ Future<List<PostModel>> getPostsRegions(String regionsIds,{int? categoryId}) async {
       try {
-        return _apiService.getPostsRegions(regionsIds);
+        return _apiService.getPostsRegions(regionsIds,categoryId:categoryId);
 
 
       } catch (e) {

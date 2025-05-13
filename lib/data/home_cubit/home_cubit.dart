@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safqa_app/data/models/category_model.dart';
 import 'package:safqa_app/data/models/city_model.dart';
@@ -54,28 +55,56 @@ class HomeCubit extends Cubit<HomeState>{
 
   // select category
 
-  void selectCategory(int index,int id) {
+  void selectCategory(int index,int id,List<CategoryModel> items) async{
+    print(items[index].name);
+    List<CategoryModel> copyOfOriginalList= List<CategoryModel>.from(state.categories);
 
-    List<CategoryModel> newCategories= state.categories.where(
+    List<CategoryModel> newCategories= copyOfOriginalList.where(
             (element) {
+              // print(id);
           return element.parentId == id;
         }
     ).toList();
 
 
 
-    for (var element in state.categories) {
+
+    for (var element in items) {
       element.isSelected = false;
     }
-    state.categories[index].isSelected = true;
+    for (var element in newCategories) {
+      element.isSelected = false;
+    }
+    items[index].isSelected = true;
 
     emit(
       state.copyWith(
-        selectedCategory: state.categories[index],
-        categories: state.categories,
+        selectedCategory: copyOfOriginalList[index],
+        categories: copyOfOriginalList,
         subCategories: newCategories
       )
     );
+
+    await  getHomePosts(categoryId: items[index].id);
+
+
+
+  }
+
+  void selectSubCategory(int index,List<CategoryModel> list) async{
+    for (var element in list) {
+      element.isSelected = false;
+    }
+    list[index].isSelected = true;
+
+    emit(
+        state.copyWith(
+            subSelectedCategory: list[index],
+            subCategories: list
+        )
+    );
+
+  await  getHomePosts(categoryId: list[index].id);
 
 
   }
@@ -103,7 +132,6 @@ class HomeCubit extends Cubit<HomeState>{
       final categories = await _homeRepository.getCategories();
       emit(state.copyWith(
         categoryStatus: CategoryStatus.success,
-
         categories: categories,
       ));
     } catch (e) {
@@ -116,15 +144,23 @@ class HomeCubit extends Cubit<HomeState>{
 
   }
 
-  Future<void> getHomePosts() async{
+  Future<void> getHomePosts({int? categoryId}) async{
 
     emit(state.copyWith(postsStatus: PostsStatus.loading));
     try {
-      final posts = await _homeRepository.getHomePosts();
-      emit(state.copyWith(
-        postsStatus: PostsStatus.success,
-        posts: posts,
-      ));
+      final posts = await _homeRepository.getHomePosts(categoryId:categoryId);
+      if(categoryId!=null){
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          filterdPosts: posts,
+        ));
+      }else{
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          posts: posts,
+        ));
+      }
+
     } catch (e) {
       emit(state.copyWith(
         postsStatus: PostsStatus.failure,
@@ -135,17 +171,23 @@ class HomeCubit extends Cubit<HomeState>{
 
   }
 
-
-
-  Future<void> getNewestPosts() async{
+  Future<void> getNewestPosts({int? categoryId}) async{
 
     emit(state.copyWith(postsStatus: PostsStatus.loading));
     try {
-      final posts = await _homeRepository.getNewestPosts();
-      emit(state.copyWith(
-        postsStatus: PostsStatus.success,
-        posts: posts,
-      ));
+      final posts = await _homeRepository.getNewestPosts(categoryId:categoryId);
+      if(categoryId!=null){
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          filterdPosts: posts,
+        ));
+      }else{
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          posts: posts,
+        ));
+      }
+
     } catch (e) {
       emit(state.copyWith(
         postsStatus: PostsStatus.failure,
@@ -156,7 +198,7 @@ class HomeCubit extends Cubit<HomeState>{
 
   }
 
-  Future<void> getPostsRegions() async{
+  Future<void> getPostsRegions({int? categoryId}) async{
     emit(state.copyWith(postsStatus: PostsStatus.loading));
     String ids='';
     for(int i =0; i< state.selectedRegions.length; i++){
@@ -167,11 +209,19 @@ class HomeCubit extends Cubit<HomeState>{
     //   (e) => e.id,
     // ).toList();
     try {
-      final posts = await _homeRepository.getPostsRegions(ids);
-      emit(state.copyWith(
-        postsStatus: PostsStatus.success,
-        posts: posts,
-      ));
+      final posts = await _homeRepository.getPostsRegions(ids,categoryId:categoryId);
+      if(categoryId!=null){
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          filterdPosts: posts,
+        ));
+      }else{
+        emit(state.copyWith(
+          postsStatus: PostsStatus.success,
+          posts: posts,
+        ));
+      }
+
     } catch (e) {
       emit(state.copyWith(
         postsStatus: PostsStatus.failure,

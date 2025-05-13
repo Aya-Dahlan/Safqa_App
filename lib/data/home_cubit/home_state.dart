@@ -40,10 +40,12 @@ class HomeState extends Equatable{
   final PostsStatus postsStatus;
   final List<CategoryModel> categories;
   final List<PostModel>? posts;
+  final List<PostModel>? filterdPosts;
   final List<CategoryModel> subCategories;
   final List<CityModel> cities;
    List<CityModel> selectedRegions;
    late CategoryModel? selectedCategory;
+   late CategoryModel? subSelectedCategory;
   final String? errorMessage;
   // List<bool> selectedRegions= List.generate(7, (index) => false);
 
@@ -57,9 +59,11 @@ class HomeState extends Equatable{
     this.postsStatus = PostsStatus.initial,
     this.categories = const [],
     this.posts = const [],
+    this.filterdPosts = const [],
     this.subCategories = const [],
     this.cities = const [],
     this.selectedCategory,
+    this.subSelectedCategory,
 
 
     this.selectedRegions = const [],
@@ -75,10 +79,12 @@ class HomeState extends Equatable{
     PostsStatus? postsStatus,
     List<CategoryModel>? categories,
     List<PostModel>? posts,
+    List<PostModel>? filterdPosts,
     List<CategoryModel>? subCategories,
     List<CityModel>? cities,
     List<CityModel>? selectedRegions,
     CategoryModel? selectedCategory,
+    CategoryModel? subSelectedCategory,
     String? errorMessage,
   }) {
     return HomeState(
@@ -88,9 +94,11 @@ class HomeState extends Equatable{
       postsStatus: postsStatus ?? this.postsStatus,
       categories: categories ??this.categories,
       posts: posts ??this.posts,
+      filterdPosts: filterdPosts ??this.filterdPosts,
       subCategories: subCategories ??this.subCategories,
       cities: cities ?? this.cities,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      subSelectedCategory: subSelectedCategory ?? this.subSelectedCategory,
       selectedRegions: selectedRegions ?? this.selectedRegions,
       errorMessage: errorMessage ??this.errorMessage,
     );
@@ -104,9 +112,11 @@ class HomeState extends Equatable{
     postsStatus,
     categories,
     posts,
+    filterdPosts,
     subCategories,
     cities,
     selectedCategory,
+    subSelectedCategory,
     selectedRegions,
     errorMessage,
   ];
