@@ -33,6 +33,9 @@ class AuthCubit extends Cubit<AuthState> {
     await _authRepository.register(name, phone, password, confirmPassword);
 
     if (response['success']) {
+      await sendOtp(phone);
+
+
       emit(AuthSuccess(response['data']));
     } else {
       emit(AuthFailure(response['message']));
@@ -43,10 +46,13 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> sendOtp(String phone) async {
     emit(AuthLoading());
     final response = await _authRepository.sendOtp(phone);
-    print('Response: ${response}');
 
     if (response['success']) {
-      emit(OtpSentSuccess());
+
+    await  verifyOtp(otp: response['data']['otp'], phoneNumber: phone);
+      emit(OtpSentSuccess(
+        OTPString: response['data']['otp']
+      ));
     } else {
       emit(AuthFailure(response['message']));
     }
@@ -56,15 +62,12 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> verifyOtp({
     required String otp,
     required String phoneNumber,
-    required String deviceId,
-    required String fcmToken,
   }) async {
     emit(AuthLoading());
     final response = await _authRepository.verifyOtp(
       otp: otp,
       phoneNumber: phoneNumber,
-      deviceId: deviceId,
-      fcmToken: fcmToken,
+
     );
 
     if (response['success']) {

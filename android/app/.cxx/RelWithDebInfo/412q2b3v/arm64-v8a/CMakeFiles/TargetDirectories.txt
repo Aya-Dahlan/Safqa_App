@@ -1,0 +1,2 @@
+D:/Flutter/Safqa_App/android/app/.cxx/RelWithDebInfo/412q2b3v/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/Flutter/Safqa_App/android/app/.cxx/RelWithDebInfo/412q2b3v/arm64-v8a/CMakeFiles/rebuild_cache.dir

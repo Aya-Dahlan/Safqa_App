@@ -109,7 +109,7 @@ class MyApp extends StatelessWidget {
             create: (context) => AuthCubit(AuthRepository()),
           ),
           BlocProvider(
-            create: (context) => HomeCubit(HomeRepository())..loadHomeData(),
+            create: (context) => HomeCubit(HomeRepository())..loadHomeData()..getMyFavorites(),
           ),
         ],
         child: MaterialApp.router(

@@ -33,6 +33,13 @@ class HomeCubit extends Cubit<HomeState>{
 
 
 
+  selectCategoryForCreatePost(CategoryModel category){
+    emit(state.copyWith(
+      selectedCategoryForCreatePost: category
+    ));
+  }
+
+
 
 
   //filter category
@@ -164,6 +171,34 @@ class HomeCubit extends Cubit<HomeState>{
     } catch (e) {
       emit(state.copyWith(
         postsStatus: PostsStatus.failure,
+        errorMessage: e.toString(),
+        posts: [],
+      ));
+    }
+
+  }
+
+
+
+  Future<void> getMyFavorites() async{
+
+    emit(state.copyWith(favoriteStatus: FavoriteStatus.loading));
+    try {
+      final myFavoritePosts = await _homeRepository.getMyFavorites();
+
+
+      for(int i =0; i<myFavoritePosts.length;i++ ){
+        myFavoritePosts[i].isFavorite=true;
+      }
+
+      emit(state.copyWith(
+        favoriteStatus: FavoriteStatus.success,
+        myFavoritePosts: myFavoritePosts,
+      ));
+
+    } catch (e) {
+      emit(state.copyWith(
+        favoriteStatus: FavoriteStatus.failure,
         errorMessage: e.toString(),
         posts: [],
       ));

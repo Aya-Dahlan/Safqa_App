@@ -38,6 +38,17 @@ class HomeRepository {
       }
     }
 
+    Future<List<PostModel>> getMyFavorites() async {
+      try {
+        return _apiService.getMyFavorites();
+
+
+      } catch (e) {
+        debugPrint("❌ Error fetching categories: $e");
+        return [];
+      }
+    }
+
     Future<List<PostModel>> getNewestPosts({int? categoryId}) async {
       try {
         return _apiService.getNewestPosts(categoryId:categoryId);

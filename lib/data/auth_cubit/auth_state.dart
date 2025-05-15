@@ -19,4 +19,7 @@ class AuthFailure extends AuthState {
 }
 
 /// ✅ حالة جديدة عند إرسال OTP بنجاح
-class OtpSentSuccess extends AuthState {}
+class OtpSentSuccess extends AuthState {
+  final String OTPString;
+  OtpSentSuccess({required this.OTPString});
+}

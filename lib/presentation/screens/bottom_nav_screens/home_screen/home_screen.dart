@@ -251,13 +251,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? GridView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
-                            // physics: const NeverScrollableScrollPhysics(),
+
+                            physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2, // عرض منتجين في كل صف
                               crossAxisSpacing: 10.w,
                               mainAxisSpacing: 10.h,
-
                               childAspectRatio: 0.1,
                             ),
                             itemCount: state.posts!.length,
@@ -271,6 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 price: '${post.price!} ريال ',
                                 location: '${post.region!.name} - ${post.district!.name}',
                                 duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                                onTap: () async{
+                                  await GoRouter.of(context).push(AppRouter.kProductDetailsScreen,extra: post);
+                                },
                                 isNew: DateTime.now().difference(DateTime.parse(post.createdAt!)).inDays <7 ?true:false,
                               );
                             },
@@ -282,6 +285,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               return  CustomProductVertWidget(
                                 imagePath: post.gallery![0].original!,
                                 title:post.title!,
+                                onTap: () async{
+                                  await GoRouter.of(context).push(AppRouter.kProductDetailsScreen,extra: post);
+                                },
                                 owner:post.user!.name!,
                                 price: '${post.price!} ريال ',
                                 location: '${post.region!.name}-${post.district!.name}',

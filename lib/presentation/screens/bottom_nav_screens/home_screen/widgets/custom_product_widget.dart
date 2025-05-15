@@ -14,8 +14,9 @@ class CustomProductWidget extends StatefulWidget {
   final String location;
   final String duration;
   final bool isNew;
+   void Function() onTap;
 
-  const CustomProductWidget({
+   CustomProductWidget({
     Key? key,
     required this.imagePaths,
     required this.title,
@@ -23,6 +24,7 @@ class CustomProductWidget extends StatefulWidget {
     required this.price,
     required this.location,
     required this.duration,
+    required this.onTap,
     this.isNew = false,
   }) : super(key: key);
 
@@ -40,6 +42,7 @@ class _CustomProductWidgetState extends State<CustomProductWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: widget.onTap,
       onLongPress: () {
         setState(() {
           isPressed = true;
@@ -52,6 +55,7 @@ class _CustomProductWidgetState extends State<CustomProductWidget> {
       },
       child: Container(
         width: 163.w,
+        // color: Colors.red,
         height: 298.h,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

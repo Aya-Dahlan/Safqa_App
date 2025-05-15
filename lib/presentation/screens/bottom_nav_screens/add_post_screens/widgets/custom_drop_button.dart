@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:safqa_app/core/utils/app_icons.dart';
 
+import '../../../../../data/models/category_model.dart';
+
 class CustomDropdown extends StatefulWidget {
   final double width; // عرض متغير
-  final List<String> items;
-  final Function(String) onChanged;
+  final List<CategoryModel>? items;
+  final Function(CategoryModel)? onChanged;
 
   const CustomDropdown({
     super.key,
@@ -20,14 +22,14 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
-  String? selectedCategory; // القيمة المختارة
+  CategoryModel? selectedCategory; // القيمة المختارة
 
   @override
   void initState() {
     super.initState();
-    selectedCategory = widget.items.isNotEmpty
-        ? widget.items.first
-        : null; // ضبط القيمة الأولية
+    // selectedCategory = widget.items.isNotEmpty
+    //     ? widget.items.first
+    //     : null; // ضبط القيمة الأولية
   }
 
   @override
@@ -45,7 +47,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
+          child: DropdownButton<CategoryModel>(
             dropdownColor: Colors.white,
             borderRadius: BorderRadius.circular(8),
             isExpanded: true,
@@ -59,16 +61,16 @@ class _CustomDropdownState extends State<CustomDropdown> {
               fontSize: 14.sp,
             ),
             value: selectedCategory,
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedCategory = newValue!;
-              });
-              widget.onChanged(newValue!);
+            onChanged: (CategoryModel? newValue) {
+              // setState(() {
+              //   selectedCategory = newValue!;
+              // });
+              // widget.onChanged(newValue!);
             },
-            items: widget.items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
+            items:widget.items==null? []: widget.items!.map<DropdownMenuItem<CategoryModel>>((CategoryModel value) {
+              return DropdownMenuItem<CategoryModel>(
                 value: value,
-                child: Text(value),
+                child: Text(value.name),
               );
             }).toList(),
           ),

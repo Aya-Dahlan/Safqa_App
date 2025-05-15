@@ -313,6 +313,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                     price: '${post.price!} ريال ',
                                     location: '${post.region!.name} - ${post.district!.name}',
                                     duration: post.parseDate(DateTime.parse(post.updatedAt!)),
+                                    onTap: () {
+                                      print('category details');
+                                    },
                                     isNew: DateTime.now().difference(DateTime.parse(post.createdAt!)).inDays <7 ?true:false,
                                   );
                                 },
@@ -325,6 +328,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                     imagePath: post.gallery![0].original!,
                                     title:post.title!,
                                     owner:post.user!.name!,
+                                    onTap: () {
+
+                                    },
                                     price: '${post.price!} ريال ',
                                     location: '${post.region!.name}-${post.district!.name}',
                                     duration: post.parseDate(DateTime.parse(post.updatedAt!)),

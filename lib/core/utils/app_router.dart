@@ -1,7 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:safqa_app/data/models/post_model.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/add_post_screens/add_post_step_1_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/add_post_screens/add_post_step_2_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/notifications_screen.dart';
+import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/product_details_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/home_screen/widgets/category_details_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/main_screen.dart';
 import 'package:safqa_app/presentation/screens/bottom_nav_screens/more_screen/add_member_screen.dart';
@@ -27,6 +29,7 @@ abstract class AppRouter {
   static const kOTPScreen = '/otpScreen';
   static const kMainScreen = '/mainScreen';
   static const kCategoryDetailsScreen = '/categoryDetails';
+  static const kProductDetailsScreen = '/postDetails';
   static const kNotificationsScreen = '/notificationsScreen';
   static const kAddPostStep1Screen = '/addPostStep1Screen';
   static const kAddPostStep2Screen = '/addPostStep2Screen';
@@ -77,6 +80,15 @@ abstract class AppRouter {
         builder: (context, state){
           final categoryModel= state.extra as CategoryModel;
           return CategoryDetailsScreen(categoryModel:categoryModel);
+        },
+      ),
+
+      GoRoute(
+        path: kProductDetailsScreen,
+        builder: (context, state){
+          print(state.extra);
+          final postModel= state.extra as PostModel;
+          return ProductDetailsScreen(postModel:postModel);
         },
       ),
       GoRoute(

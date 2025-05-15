@@ -35,30 +35,30 @@ class AddPostStep2Screen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomDropdown(
-                  width: 163.w, // التحكم في العرض
-                  items: [
-                    'الموديل',
-                    'القسم الأول',
-                    'القسم الثاني',
-                    'القسم الثالث'
-                  ],
-                  onChanged: (value) {
-                    print('القسم المختار: $value');
-                  },
-                ),
-                CustomDropdown(
-                  width: 163.w, // التحكم في العرض
-                  items: [
-                    'الجير',
-                    'القسم الأول',
-                    'القسم الثاني',
-                    'القسم الثالث'
-                  ],
-                  onChanged: (value) {
-                    print('القسم المختار: $value');
-                  },
-                ),
+                // CustomDropdown(
+                //   width: 163.w, // التحكم في العرض
+                //   items: [
+                //     'الموديل',
+                //     'القسم الأول',
+                //     'القسم الثاني',
+                //     'القسم الثالث'
+                //   ],
+                //   onChanged: (value) {
+                //     print('القسم المختار: $value');
+                //   },
+                // ),
+                // CustomDropdown(
+                //   width: 163.w, // التحكم في العرض
+                //   items: [
+                //     'الجير',
+                //     'القسم الأول',
+                //     'القسم الثاني',
+                //     'القسم الثالث'
+                //   ],
+                //   onChanged: (value) {
+                //     print('القسم المختار: $value');
+                //   },
+                // ),
               ],
             ),
             SizedBox(
@@ -78,13 +78,13 @@ class AddPostStep2Screen extends StatelessWidget {
             SizedBox(
               height: 16.h,
             ),
-            CustomDropdown(
-              width: 343.w,
-              items: const ['إختر المنطقة', '1', '2', '3'],
-              onChanged: (value) {
-                print('القسم المختار: $value');
-              },
-            ),
+            // CustomDropdown(
+            //   width: 343.w,
+            //   items: const ['إختر المنطقة', '1', '2', '3'],
+            //   onChanged: (value) {
+            //     print('القسم المختار: $value');
+            //   },
+            // ),
             SizedBox(
               height: 193.h,
             ),

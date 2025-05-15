@@ -8,24 +8,28 @@ import 'package:safqa_app/core/utils/app_router.dart';
 import 'package:safqa_app/presentation/widgets/custom_button_widget.dart';
 
 class CustomProductVertWidget extends StatefulWidget {
-  const CustomProductVertWidget({
+   CustomProductVertWidget({
     super.key,
     this.isNew = false,
+    this.inFavorite = false,
     required this.imagePath,
     required this.title,
     required this.owner,
     required this.price,
     required this.location,
+    required this.onTap,
     required this.duration,
   });
 
   final bool isNew;
+  final bool inFavorite;
   final String imagePath;
   final String title;
   final String owner;
   final String price;
   final String location;
   final String duration;
+  void Function() onTap;
 
   @override
   State<CustomProductVertWidget> createState() =>
@@ -33,11 +37,14 @@ class CustomProductVertWidget extends StatefulWidget {
 }
 
 class _CustomProductVertWidgetState extends State<CustomProductVertWidget> {
+
   bool isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    print(widget.inFavorite);
     return GestureDetector(
+      onTap: widget.onTap,
       onLongPress: () {
         setState(() {
           isPressed = !isPressed;
@@ -232,20 +239,41 @@ class _CustomProductVertWidgetState extends State<CustomProductVertWidget> {
                     ],
                   ),
                   const Spacer(),
-                  Container(
-                    clipBehavior: Clip.antiAlias,
-                    width: 114.w,
-                    height: 100.h,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child:
-                    Image.network(
-                      widget.imagePath,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
+                 Stack(
+                   children: [
+                     Container(
+                       clipBehavior: Clip.antiAlias,
+                       width: 114.w,
+                       height: 100.h,
+                       decoration: BoxDecoration(
+                         color: Colors.red,
+                         borderRadius: BorderRadius.circular(4),
+                       ),
+                       child:Image.network(
+                         widget.imagePath,
+                         fit: BoxFit.fill,
+                       ),
+                     ),
+
+                     // if(widget.inFavorite)
+                     Container(
+                       height: 30,
+                       width: 30,
+                       margin: EdgeInsets.all(8),
+                       decoration: BoxDecoration(
+                         shape: BoxShape.circle,
+                         color: Colors.white
+                       ),
+                       child: Center(
+                         child: IconButton(
+                           padding: EdgeInsets.zero,
+                           onPressed: (){},
+                           icon: Icon(widget.inFavorite ?Icons.favorite :Icons.favorite_border  ,color:widget.inFavorite ? Color(0xff2E5579) :null,),
+                         ),
+                       ),
+                     )
+                   ],
+                 )
                 ],
               ),
             ),

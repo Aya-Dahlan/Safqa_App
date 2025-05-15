@@ -87,6 +87,23 @@ class ApiHomeService {
   }
 
 
+Future<List<PostModel>> getMyFavorites() async {
+    try {
+      final Response<dynamic>  response =await _dio.get(ApiConstants.myFavorite);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((post) => PostModel.fromJson(post)).toList();
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      print("❌ Error fetching categories: $e");
+      return [];
+    }
+  }
+
+
 
   Future<List<PostModel>> getPostsByRegionId({int? regionId}) async {
     try {

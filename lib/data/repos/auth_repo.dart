@@ -136,13 +136,11 @@ class AuthRepository {
   Future<Map<String, dynamic>> verifyOtp({
     required String otp,
     required String phoneNumber,
-    required String deviceId,
-    required String fcmToken,
   }) async {
     try {
       final deviceInfo = await DeviceService.getDeviceInfo();
 
-      final response = await _apiService.post('/api/v1/auth/otp/verify', data: {
+      final response = await _apiService.post('/v1/auth/otp/verify', data: {
         "otp": otp,
         "phone_number": phoneNumber,
         'fcm_token': deviceInfo['fcm_token'],

@@ -18,6 +18,13 @@ enum PostsStatus {
   failure,
 }
 
+enum FavoriteStatus {
+  initial,
+  loading,
+  success,
+  failure,
+}
+
 enum CategoryDetailsStatus {
   initial,
   loading,
@@ -37,14 +44,17 @@ class HomeState extends Equatable{
   final CategoryStatus categoryStatus;
   final CitiesStatus citiesStatus;
   final CategoryDetailsStatus categoryDetailsStatus;
+  final FavoriteStatus favoriteStatus;
   final PostsStatus postsStatus;
   final List<CategoryModel> categories;
   final List<PostModel>? posts;
+  final List<PostModel>? myFavoritePosts;
   final List<PostModel>? filterdPosts;
   final List<CategoryModel> subCategories;
   final List<CityModel> cities;
    List<CityModel> selectedRegions;
    late CategoryModel? selectedCategory;
+   late CategoryModel? selectedCategoryForCreatePost;
    late CategoryModel? subSelectedCategory;
   final String? errorMessage;
   // List<bool> selectedRegions= List.generate(7, (index) => false);
@@ -57,13 +67,16 @@ class HomeState extends Equatable{
     this.citiesStatus = CitiesStatus.initial,
     this.categoryDetailsStatus = CategoryDetailsStatus.initial,
     this.postsStatus = PostsStatus.initial,
+    this.favoriteStatus = FavoriteStatus.initial,
     this.categories = const [],
     this.posts = const [],
+    this.myFavoritePosts = const [],
     this.filterdPosts = const [],
     this.subCategories = const [],
     this.cities = const [],
     this.selectedCategory,
     this.subSelectedCategory,
+    this.selectedCategoryForCreatePost,
 
 
     this.selectedRegions = const [],
@@ -77,13 +90,16 @@ class HomeState extends Equatable{
     CitiesStatus? citiesStatus,
     CategoryDetailsStatus? categoryDetailsStatus,
     PostsStatus? postsStatus,
+    FavoriteStatus? favoriteStatus,
     List<CategoryModel>? categories,
     List<PostModel>? posts,
+    List<PostModel>? myFavoritePosts,
     List<PostModel>? filterdPosts,
     List<CategoryModel>? subCategories,
     List<CityModel>? cities,
     List<CityModel>? selectedRegions,
     CategoryModel? selectedCategory,
+    CategoryModel? selectedCategoryForCreatePost,
     CategoryModel? subSelectedCategory,
     String? errorMessage,
   }) {
@@ -92,14 +108,17 @@ class HomeState extends Equatable{
       citiesStatus: citiesStatus ?? this.citiesStatus,
       categoryDetailsStatus: categoryDetailsStatus ?? this.categoryDetailsStatus,
       postsStatus: postsStatus ?? this.postsStatus,
+      favoriteStatus: favoriteStatus ?? this.favoriteStatus,
       categories: categories ??this.categories,
       posts: posts ??this.posts,
+      myFavoritePosts: myFavoritePosts ??this.myFavoritePosts,
       filterdPosts: filterdPosts ??this.filterdPosts,
       subCategories: subCategories ??this.subCategories,
       cities: cities ?? this.cities,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       subSelectedCategory: subSelectedCategory ?? this.subSelectedCategory,
       selectedRegions: selectedRegions ?? this.selectedRegions,
+      selectedCategoryForCreatePost: selectedCategoryForCreatePost ?? this.selectedCategoryForCreatePost,
       errorMessage: errorMessage ??this.errorMessage,
     );
   }
@@ -109,14 +128,17 @@ class HomeState extends Equatable{
     categoryStatus,
     citiesStatus,
     categoryDetailsStatus,
+    favoriteStatus,
     postsStatus,
     categories,
     posts,
+    myFavoritePosts,
     filterdPosts,
     subCategories,
     cities,
     selectedCategory,
     subSelectedCategory,
+    selectedCategoryForCreatePost,
     selectedRegions,
     errorMessage,
   ];
